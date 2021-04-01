@@ -73,7 +73,7 @@ public class TrileadSsh2ConnectionManager extends SshConnectionManager {
         try {
             KnownHosts knownHosts = getKnownHosts();
             final ConnectionInfo connectionInfo = connection.connect(new HostVerifier(knownHosts));
-            logger.fine("SSH connection established:" +
+            logger.info("SSH connection established:" +
                     "\n  clientToServerCryptoAlgorithm: " + connectionInfo.clientToServerCryptoAlgorithm +
                     "\n  clientToServerMACAlgorithm: " + connectionInfo.clientToServerMACAlgorithm +
                     "\n  keyExchangeAlgorithm: " + connectionInfo.keyExchangeAlgorithm +
@@ -92,7 +92,7 @@ public class TrileadSsh2ConnectionManager extends SshConnectionManager {
             port = getPortNumber(portForwarder);
             connected = true;
         } catch (CancelConnectionQuietlyException | AuthenticationFailedException e) {
-            logger.fine(e.getMessage());
+            logger.info(e.getMessage());
             errorMessage = e.getMessage();
         } catch (Throwable e) {
             logger.log(Level.SEVERE, "Cannot establish SSH connection: " + e.getMessage(), e);
@@ -120,17 +120,17 @@ public class TrileadSsh2ConnectionManager extends SshConnectionManager {
             connection.close();
             connection = null;
         }
-        logger.fine("Close ssh connection");
+        logger.info("Close ssh connection");
     }
 
     private void tryAuthenticate(ConnectionParams connectionParams, Connection connection) throws Throwable {
         final String[] remainingAuthMethods = connection.getRemainingAuthMethods(connectionParams.getSshUserName());
-        logger.finer("Supported auth methods: " + Arrays.toString(remainingAuthMethods));
+        logger.info("Supported auth methods: " + Arrays.toString(remainingAuthMethods));
         for (String authMethod : remainingAuthMethods) {// publickey, keyboard-interactive
             if ("publickey".equals(authMethod)) {
 
                 for (File keyFile : identityFiles) {
-                    logger.fine("Trying 'publickey' auth with " + keyFile);
+                    logger.info("Trying 'publickey' auth with " + keyFile);
                     String passphrase = null;
                     String title;
                     String message;
@@ -154,7 +154,7 @@ public class TrileadSsh2ConnectionManager extends SshConnectionManager {
                 }
             }
             if ("keyboard-interactive".equals(authMethod)) {
-                logger.fine("Trying 'keyboard-interactive' auth");
+                logger.info("Trying 'keyboard-interactive' auth");
                 try {
                     if (connection.authenticateWithKeyboardInteractive(connectionParams.getSshUserName(),
                             new InteractiveInputCallback())) {
@@ -175,7 +175,7 @@ public class TrileadSsh2ConnectionManager extends SshConnectionManager {
                 }
             }
             if ("password".equals(authMethod)) {
-                logger.fine("Trying 'password' auth");
+                logger.info("Trying 'password' auth");
                 if (connection.authenticateWithPassword(connectionParams.getSshUserName(),
                         getPassphrase("Password Authentication",
                                 "Enter password for " + connectionParams.getSshUserName()))) {
