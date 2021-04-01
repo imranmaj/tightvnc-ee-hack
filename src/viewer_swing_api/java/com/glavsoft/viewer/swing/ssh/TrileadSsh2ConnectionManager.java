@@ -127,53 +127,53 @@ public class TrileadSsh2ConnectionManager extends SshConnectionManager {
         final String[] remainingAuthMethods = connection.getRemainingAuthMethods(connectionParams.getSshUserName());
         logger.info("Supported auth methods: " + Arrays.toString(remainingAuthMethods));
         for (String authMethod : remainingAuthMethods) {// publickey, keyboard-interactive
-            if ("publickey".equals(authMethod)) {
+            // if ("publickey".equals(authMethod)) {
 
-                for (File keyFile : identityFiles) {
-                    logger.info("Trying 'publickey' auth with " + keyFile);
-                    String passphrase = null;
-                    String title;
-                    String message;
-                    if (isKeyFileEncrypted(keyFile)) {
-                        if (keyFile.getName().contains("rsa")) {
-                            title = "RSA Authentication";
-                            message = "Enter RSA private key password:";
-                        } else if (keyFile.getName().contains("dsa")) {
-                            title = "DSA Authentication";
-                            message = "Enter DSA private key password:";
-                        } else {
-                            title = "SSH Authentication";
-                            message = "Enter private key password:";
-                        }
-                        passphrase = getPassphrase(title, message);
-                    }
-                    if (connection.authenticateWithPublicKey(connectionParams.getSshUserName(), keyFile, passphrase)) {
-                        logger.info("Authenticated with " + keyFile.getName());
-                        return ;
-                    }
-                }
-            }
-            if ("keyboard-interactive".equals(authMethod)) {
-                logger.info("Trying 'keyboard-interactive' auth");
-                try {
-                    if (connection.authenticateWithKeyboardInteractive(connectionParams.getSshUserName(),
-                            new InteractiveInputCallback())) {
-                        return;
-                    } else{
-                        throw new AuthenticationFailedException("Authentication failed");
-                    }
-                } catch (IOException e) {
-                    if (e.getCause() != null && e.getCause().getCause() != null) { // go deeper!
-                        throw e.getCause().getCause();
-                    } else {
-                        if (e.getCause() != null) {
-                            throw e.getCause();
-                        } else {
-                            throw e;
-                        }
-                    }
-                }
-            }
+            //     for (File keyFile : identityFiles) {
+            //         logger.info("Trying 'publickey' auth with " + keyFile);
+            //         String passphrase = null;
+            //         String title;
+            //         String message;
+            //         if (isKeyFileEncrypted(keyFile)) {
+            //             if (keyFile.getName().contains("rsa")) {
+            //                 title = "RSA Authentication";
+            //                 message = "Enter RSA private key password:";
+            //             } else if (keyFile.getName().contains("dsa")) {
+            //                 title = "DSA Authentication";
+            //                 message = "Enter DSA private key password:";
+            //             } else {
+            //                 title = "SSH Authentication";
+            //                 message = "Enter private key password:";
+            //             }
+            //             passphrase = getPassphrase(title, message);
+            //         }
+            //         if (connection.authenticateWithPublicKey(connectionParams.getSshUserName(), keyFile, passphrase)) {
+            //             logger.info("Authenticated with " + keyFile.getName());
+            //             return ;
+            //         }
+            //     }
+            // }
+            // if ("keyboard-interactive".equals(authMethod)) {
+            //     logger.info("Trying 'keyboard-interactive' auth");
+            //     try {
+            //         if (connection.authenticateWithKeyboardInteractive(connectionParams.getSshUserName(),
+            //                 new InteractiveInputCallback())) {
+            //             return;
+            //         } else{
+            //             throw new AuthenticationFailedException("Authentication failed");
+            //         }
+            //     } catch (IOException e) {
+            //         if (e.getCause() != null && e.getCause().getCause() != null) { // go deeper!
+            //             throw e.getCause().getCause();
+            //         } else {
+            //             if (e.getCause() != null) {
+            //                 throw e.getCause();
+            //             } else {
+            //                 throw e;
+            //             }
+            //         }
+            //     }
+            // }
             if ("password".equals(authMethod)) {
                 logger.info("Trying 'password' auth");
                 if (connection.authenticateWithPassword(connectionParams.getSshUserName(),
